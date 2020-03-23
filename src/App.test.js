@@ -6,9 +6,11 @@ import { fetchShows as mockFetchShows } from "./api/fetchShows";
 
 jest.mock("./api/fetchShows");
 
-// test('App Mounts', () => {
-//   render(<App />)
-// })
+test('App Mounts', () => {
+  mockFetchShows.mockResolvedValueOnce(showData);
+  render(<App />)
+  expect(mockFetchShows).toHaveBeenCalledTimes(1);
+})
 
 const showData = {
   data: {
@@ -711,7 +713,7 @@ const showData = {
 
 test("App Component Mounts and shows title", async () => {
   mockFetchShows.mockResolvedValueOnce(showData);
-  const { getByText, getAllByText, queryAllByTestId } = render(<App />);
+  const { getAllByText } = render(<App />);
 
   await waitFor(() => {
     expect(getAllByText(/Stranger Things/i));
@@ -720,26 +722,28 @@ test("App Component Mounts and shows title", async () => {
 
 test("App Can select a season ", async () => {
   mockFetchShows.mockResolvedValueOnce(showData);
-  const { getByText, getAllByText, queryAllByTestId } = render(<App />);
+  const { getByText } = render(<App />);
 
   await waitFor(() => {
     expect(getByText(/select a season/i));
   });
 
   userEvent.click(getByText(/select a season/i));
-  userEvent.click(getByText(/Season 3/i));
+  fireEvent.click(getByText(/Season 3/i));
 });
 
 test("App Can select season 2 and render shows ", async () => {
   mockFetchShows.mockResolvedValueOnce(showData);
-  const { getByText, getAllByText, queryAllByTestId } = render(<App />);
+  const { getByText, getAllByText } = render(<App />);
 
   await waitFor(() => {
     expect(getByText(/select a season/i));
   });
 
   userEvent.click(getByText(/select a season/i));
-  userEvent.click(getByText(/Season 2/i));
+  fireEvent.click(getByText(/Season 2/i));
 
-  expect(getByText(/The Gate/i))
+  expect(getByText(/MADMAX/i));
+  expect(getByText(/The Spy/i));
+  expect(getAllByText(/The Gate/i));
 });
